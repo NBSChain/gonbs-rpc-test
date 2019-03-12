@@ -1,0 +1,22 @@
+﻿syntax = "proto3";
+
+package demo;
+
+service Greeter {
+	rpc SayHello (HelloRequest) returns (HelloReply){}
+
+	rpc GetCurrentAcc (HelloRequest) returns (PeerInof){}
+ }
+
+message HelloRequest {
+	string name = 1;
+}
+
+message HelloReply {
+	string message = 1;
+}
+
+message PeerInof {
+	string nickname = 1;
+	string avatarName = 2;
+}
