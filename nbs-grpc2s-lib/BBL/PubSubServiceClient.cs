@@ -26,16 +26,19 @@ namespace grpc2slib.BBL
         private bool DEBUG = false;
         private ObservableCollection<T> collection;
         private T Self;
+        private string selfID;
 
         public PubSubServiceClient(
             PubSubTask.PubSubTaskClient client, 
             ObservableCollection<T> collection,
             T self,
+            string acid,
             bool debug)
         {
             this.pubsubClient = client;
             this.collection = collection;
             this.Self = self;
+            this.selfID = acid;
             DEBUG = debug;
         }
 
@@ -74,7 +77,7 @@ namespace grpc2slib.BBL
                         SubscribeResponse response = call.ResponseStream.Current;
                         Console.WriteLine(">>>Recv Message:" + response.From);
                         T t = func(response);
-                        collection.Add(t);
+                        if(response.From != selfID) collection.Add(t);
 
                     }
                     
