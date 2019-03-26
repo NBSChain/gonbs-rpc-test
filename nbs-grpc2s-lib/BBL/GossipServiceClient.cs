@@ -2,6 +2,7 @@
 using System.Text;
 using Pb;
 using System.IO;
+using System.Text.RegularExpressions;
 using UrusTools.Utils;
 
 
@@ -66,17 +67,68 @@ namespace grpc2slib.BBL
                 viewInfos infos = result.InputViews;
                 int len = result.InputViews.Views.Count;
                 builder.AppendFormat("#####>>>{0}:{1}>>>Begin:\r\n", "IN", result.InputViews.Views.Count);
+                string pattern = @"\|";
+                
+                
                 for (int i = 0; i < len; i++)
                 {
                     string s = result.InputViews.Views[i];
-                    builder.Append(s);
+                    string[] vs = s.Split('|');
+                    StringBuilder isb = new StringBuilder();
+                    if (vs.Length > 0)
+                    {
+                        for(int m=0;m<vs.Length;m++)
+                        {
+                            if (m > 1)
+                            {
+                                isb.Append("|");
+                                isb.Append(vs[m]);
+                                isb.Append("|");
+                            }
+                            else
+                            {
+                                isb.Append(vs[m]);
+                            }
+                            isb.Append("\r\n");
+                        }
+                        builder.Append(vs.ToString());
+                    }
+                    else
+                    {
+                        builder.Append(s);
+                    }
+
                     builder.AppendLine();
                 }
                 viewInfos outviews = result.OutputViews;
                 builder.AppendFormat("#####>>>{0}:{1}>>>Begin:\r\n", "OUT", outviews.Views.Count);
                 for (int j = 0; j < outviews.Views.Count; j++)
                 {
-                    builder.Append(outviews.Views[j]);
+                    string s = outviews.Views[j];
+                    string[] vs = s.Split('|');
+                    StringBuilder isb = new StringBuilder();
+                    if (vs.Length > 0)
+                    {
+                        for (int m = 0; m < vs.Length; m++)
+                        {
+                            if (m > 1)
+                            {
+                                isb.Append("|");
+                                isb.Append(vs[m]);
+                                isb.Append("|");
+                            }
+                            else
+                            {
+                                isb.Append(vs[m]);
+                            }
+                            isb.Append("\r\n");
+                        }
+                        builder.Append(vs.ToString());
+                    }
+                    else
+                    {
+                        builder.Append(s);
+                    }
                     builder.AppendLine();
                 }
                 builder.AppendFormat("############ {0} ###########\r\n", now.ToString("yyyy-MM-dd HH:mm:ss"));
