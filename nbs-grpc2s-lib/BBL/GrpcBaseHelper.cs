@@ -30,9 +30,39 @@ namespace grpc2slib.BBL
 
         private Channel _channel;
 
+        private bool debug = false;
+
+        public bool DEBUG {
+            get
+            {
+                return debug;
+            }
+        }
+
+        public bool OpenDebug()
+        {
+            debug = true;
+            return DEBUG;
+        }
+
         public static GrpcBaseHelper Instance()
         {
             if (_helper == null) _helper = NestedHepler.Instace;
+            return _helper;
+        }
+
+        public static GrpcBaseHelper Instance(bool Debug)
+        {
+            if (_helper == null) _helper = NestedHepler.Instace;
+            _helper.debug = Debug;
+            return _helper;
+        }
+
+        public static GrpcBaseHelper Instance(string host,int port)
+        {
+            if (_helper == null) _helper = NestedHepler.Instace;
+            _helper.Host = host;
+            _helper.Port = port;
             return _helper;
         }
 
@@ -107,6 +137,16 @@ namespace grpc2slib.BBL
                     Console.WriteLine(rpcEx.Message);
                 }
             }
+        }
+
+        public void Logged(string content)
+        {
+            if (DEBUG) Console.WriteLine(content);
+        }
+
+        public void Logged(Exception exception,string content)
+        {
+            if (DEBUG) Console.WriteLine(content,exception.StackTrace);
         }
     }
 }

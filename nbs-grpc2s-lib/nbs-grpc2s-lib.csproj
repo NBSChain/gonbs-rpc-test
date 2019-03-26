@@ -73,8 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BBL\AccountServiceClient.cs" />
-    <Compile Include="BBL\BaseRPCService.cs" />
-    <Compile Include="BBL\ChatGRPCServiceClient.cs" />
+    <Compile Include="BBL\GossipServiceClient.cs" />
     <Compile Include="BBL\GrpcBaseHelper.cs" />
     <Compile Include="BBL\PubSubServiceClient.cs" />
     <Compile Include="common\AsyncEnumerableExtensions.cs" />
