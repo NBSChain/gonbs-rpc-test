@@ -56,11 +56,11 @@ namespace grpc2slib.BBL
             string ipv4 = LocalInfoUtil.GetLocalIPv4();
             string pcName = LocalInfoUtil.GetLocalUsername();
             builder.Append("\r\n");
-            builder.Append("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\r\n");
-            builder.Append("┃************************* Gossip Debug Info *************************\r\n");
+            builder.Append("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\r\n");
+            builder.Append("┃******************* Gossip Debug Info *********************\r\n");
             builder.AppendFormat("┃ Operator	:{0}	\r\n", pcName);
             builder.AppendFormat("┃ LocalIP	:{0}	\r\n", ipv4);
-            builder.Append("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\r\n");
+            builder.Append("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\r\n");
             //builder.AppendFormat("{0} :\r\n", result.Result);
             try
             {
@@ -82,7 +82,7 @@ namespace grpc2slib.BBL
                     builder.Append(s);
                     builder.AppendLine();
                 }
-                builder.AppendFormat("############ {0} ###########\r\n", now.ToString("yyyy-MM-dd HH:mm:ss"));
+                builder.AppendFormat("############## {0} #############\r\n", now.ToString("yyyy-MM-dd HH:mm:ss"));
             }
             catch (Exception e)
             {
