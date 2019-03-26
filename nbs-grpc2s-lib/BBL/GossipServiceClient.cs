@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Grpc.Core;
+using System;
+using System.Threading;
 using System.Text;
 using Pb;
 using System.IO;
@@ -28,6 +30,7 @@ namespace grpc2slib.BBL
         private GrpcBaseHelper helper;
 
         readonly GossipTask.GossipTaskClient gossipClient;
+        
 
         public GossipServiceClient(GrpcBaseHelper h,string logRootPath,string logName)
         {
@@ -47,6 +50,41 @@ namespace grpc2slib.BBL
         public DebugResult GossipDebug(DebugCmd cmd)
         {
             return gossipClient.debug(cmd);
+        }
+
+        public string RestartGossip() {
+            string res = "重启成功";
+            Channel channel = helper.NewChannel();
+            try
+            {
+                
+                GossipTask.GossipTaskClient gClient = new GossipTask.GossipTaskClient(channel);
+                DateTime opTime = DateTime.Now;
+                string name = LocalInfoUtil.GetLocalUsername();
+                StringBuilder sb = new StringBuilder();
+                string content = "-----{0}-----{1} at {2} gossip restarting ... ";
+                WriteLog(String.Format(content,
+                    opTime.ToLongTimeString(),
+                    name,
+                    opTime.ToString("yyyy-MM-dd HH:mm:ss")),
+                    "restart Gossip");
+                gClient.stopService(new StopRequest { });
+                
+                Thread.Sleep(500);
+                gClient.startServiceAsync(new StartRequest { });
+
+            }
+            catch(Exception e)
+            {
+                WriteLog(String.Format("重启Gossip发生错误，请重试！\r\n 可能原因:{0}", e.Message), "");
+                return String.Format("重启Gossip发生错误，请重试！\r\n 可能原因:{0}", e.Message);
+            }
+            finally
+            {
+                channel.ShutdownAsync().Wait();
+            }
+            WriteLog(String.Format("############ {0} ############\r\n", res), "");
+            return res;
         }
 
         public string FormatResult(DebugResult result)
@@ -107,8 +145,38 @@ namespace grpc2slib.BBL
             {
                 Console.WriteLine(e.Message);
             }
-            
         }
 
+        public void WriteLog(string content,string title)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append("\r\n");
+            if (!String.IsNullOrEmpty(title))
+            {
+                builder.Append(buildHeader(title));
+            }
+            builder.Append(content);
+            try
+            {
+                var logBinaray = Encoding.Default.GetBytes(builder.ToString());
+                using (FileStream logFile = new FileStream(logPathName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Write))
+                {
+                    logFile.Seek(0, SeekOrigin.End);
+                    logFile.Write(logBinaray, 0, logBinaray.Length);
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private string buildHeader(string arg)
+        {
+            string header = "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\r\n" +
+                "┃******************* {0} *********************\r\n" +
+                "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\r\n";
+            return String.Format(header,arg);
+        }
     }
 }
